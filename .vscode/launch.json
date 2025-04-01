@@ -3,13 +3,13 @@
 	"configurations": [
 		{
 			"name": "extension",
-			"preLaunchTask": "make dev_debugging",
+			// "preLaunchTask": "make dev_debugging",
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceRoot}/build",
-				"${workspaceFolder}/debuggee"
+				"C:\\git\\LibAFL"
 			],
 			"stopOnEntry": false,
 			"outFiles": [

@@ -1651,6 +1651,9 @@ impl DebugSession {
             self.console_error(format!("Stop reason: {}", description));
         }
 
+        log::warn!("FUCK Stop reason: {:?}, thread name: {:?}", stopped_thread.stop_reason(), stopped_thread.index_id());
+        log::warn!("FUCK2 stop format: {:?}", stopped_thread.description(true));
+
         self.send_event(EventBody::stopped(StoppedEventBody {
             all_threads_stopped: Some(true),
             thread_id: Some(stopped_thread.thread_id() as i64),

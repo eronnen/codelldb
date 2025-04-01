@@ -178,6 +178,23 @@ impl SBThread {
         });
         unsafe { get_str(ptr) }
     }
+
+    pub fn description(&self, stop_format: bool) -> String {
+        let mut descr = SBStream::new();
+
+        let f = |descr: &mut SBStream| cpp!(unsafe [self as "SBThread*", descr as "SBStream*", stop_format as "bool"] -> bool as "bool" {
+            return self->GetDescription(*descr, stop_format);
+        });
+
+        if f(&mut descr) {
+            match str::from_utf8(descr.data()) {
+                Ok(s) => return s.to_string(),
+                Err(_) => return String::new(),
+            }
+        } else {
+            return String::new();
+        }
+    }
 }
 
 impl IsValid for SBThread {
