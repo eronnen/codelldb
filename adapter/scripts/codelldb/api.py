@@ -1,7 +1,7 @@
 from lldb import SBValue
 import warnings
 import __main__
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, Literal
 
 from . import interface
 from .value import Value
@@ -75,7 +75,7 @@ def create_webview(html: Optional[str] = None, title: Optional[str] = None, view
     return webview
 
 
-def debugger_message(output: str, category: str = 'console'):
+def debugger_message(output: str, category: Literal['stderr', 'console', 'stdout'] = 'stdout'):
     debugger_id = interface.current_debugger().GetID()
     interface.fire_event(debugger_id, dict(type='DebuggerMessage', output=output, category=category))
 

@@ -557,7 +557,11 @@ impl DebugSession {
         log_errors!(self.dap_session.try_send_event(event_body));
     }
 
-    fn console_message(&self, output: impl std::fmt::Display) {
+    fn console_info(&self, output: impl std::fmt::Display) {
+        self.console_message_impl(Some("stdout"), output);
+    }
+
+    fn console_warning(&self, output: impl std::fmt::Display) {
         self.console_message_impl(Some("console"), output);
     }
 
@@ -631,7 +635,7 @@ impl DebugSession {
     }
 
     fn exec_commands(&self, script_name: &str, commands: &[String]) -> Result<(), Error> {
-        self.console_message(format!("Executing script: {}", script_name));
+        self.console_info(format!("Executing script: {}", script_name));
         let interpreter = self.debugger.command_interpreter();
         let mut result = SBCommandReturnObject::new();
         for command in commands {
@@ -640,7 +644,7 @@ impl DebugSession {
             debug!("{} -> {:?}, {:?}", command, ok, result);
             let output = result.output().to_string_lossy().into_owned();
             if !output.is_empty() {
-                self.console_message(output);
+                self.console_info(output);
             }
             if !result.succeeded() {
                 let err_msg = result.error().to_string_lossy();
@@ -1563,7 +1567,7 @@ impl DebugSession {
     fn handle_diagnostic_event(&mut self, event: &SBStructuredData) {
         let diag_type = event.value_for_key("type").string_value();
         let message = event.value_for_key("message").string_value();
-        self.console_message(format!("{diag_type}: {message}"));
+        self.console_info(format!("{diag_type}: {message}"));
     }
 
     fn handle_process_event(&mut self, process_event: &SBProcessEvent) {
@@ -1668,12 +1672,12 @@ impl DebugSession {
         match process.state() {
             Exited => {
                 let exit_code = process.exit_status() as i64;
-                self.console_message(format!("Process exited with code {}.", exit_code));
+                self.console_warning(format!("Process exited with code {}.", exit_code));
                 self.send_event(EventBody::exited(ExitedEventBody { exit_code }));
                 self.send_event(EventBody::terminated(TerminatedEventBody { restart: None }));
             }
             Detached => {
-                self.console_message("Detached from debuggee.");
+                self.console_warning("Detached from debuggee.");
                 self.send_event(EventBody::terminated(TerminatedEventBody { restart: None }));
             }
             _ => (),

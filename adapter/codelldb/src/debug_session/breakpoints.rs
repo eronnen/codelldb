@@ -140,7 +140,7 @@ impl DebugSession {
                         path.display(),
                         line
                     );
-                    self.console_message(&message);
+                    self.console_warning(&message);
                     breakpoint.message = Some(message);
                 }
             }
@@ -720,7 +720,7 @@ impl DebugSession {
         if let Some(ref log_message) = bp_info.log_message {
             let frame = thread.frame_at_index(0);
             let message = self.format_logpoint_message(log_message, &frame);
-            self.console_message(message);
+            self.console_warning(message);
             return false;
         }
 

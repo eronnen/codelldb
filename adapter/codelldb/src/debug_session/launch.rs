@@ -116,7 +116,7 @@ impl super::DebugSession {
             args.push_str(a);
             args
         });
-        self.console_message(format!("Launching: {}", command_line));
+        self.console_info(format!("Launching: {}", command_line));
 
         #[cfg(target_os = "linux")]
         {
@@ -180,7 +180,7 @@ impl super::DebugSession {
         let process = self.target.process();
         debug!("Process state: {:?}", process.state());
 
-        self.console_message(format!(
+        self.console_info(format!(
             "Launched process {} from '{:?}'",
             process.process_id(),
             self.target.executable(),
@@ -283,7 +283,7 @@ impl super::DebugSession {
             }
         };
 
-        self.console_message(format!("Attached to process {}", process.process_id()));
+        self.console_info(format!("Attached to process {}", process.process_id()));
         self.terminate_on_disconnect = false;
 
         if !self.target.process().state().is_alive() {
@@ -544,7 +544,7 @@ impl super::DebugSession {
                 "Console is in 'evaluation' mode, prefix commands with '/cmd ' or '`'."
             }
         };
-        self.console_message(message);
+        self.console_info(message);
     }
 
     fn init_source_map<S: AsRef<str>>(&mut self, source_map: impl IntoIterator<Item = (S, Option<S>)>) {
